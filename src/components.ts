@@ -52,6 +52,12 @@ export const GameButtons = ((game: UnoGame<true>) => {
             label: "Play",
             emoji: ComponentBuilder.emojiToPartial("🃏", "default")
         })
+        .addInteractionButton({
+            style: ButtonStyles.SUCCESS,
+            customID: ButtonIDs.SHOUT_UNO,
+            label: "Shout BUNO",
+            emoji: ComponentBuilder.emojiToPartial("❗", "default")
+        })
         .addRow()
         .addInteractionButton({
             style: ButtonStyles.SECONDARY,

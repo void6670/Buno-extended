@@ -104,6 +104,7 @@ export const ButtonIDs = Object.freeze({
     LEAVE_GAME_CONFIRMATION_YES: "confirm-leave-game",
     LEAVE_GAME_CONFIRMATION_NO: "deny-leave-game",
     VIEW_GAME_SETTINGS: "view-settings",
+    SHOUT_UNO: "shout-uno"
 });
 
 export const SelectIDs = Object.freeze({

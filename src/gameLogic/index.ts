@@ -121,6 +121,7 @@ export function onButtonPress(ctx: ComponentInteraction<ComponentTypes.BUTTON>) 
         case ButtonIDs.LEAVE_GAME:
         case ButtonIDs.JOIN_MID_GAME:
         case ButtonIDs.VIEW_GAME_SETTINGS:
+        case ButtonIDs.SHOUT_UNO:
             if (!game || !hasStarted(game)) return;
             onGameButtonPress(ctx, game);
             break;

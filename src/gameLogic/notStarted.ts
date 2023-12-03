@@ -144,6 +144,8 @@ won by default`,
     });
     startedGame.players = players;
 
+    startedGame.unoPlayers = [];
+
     startedGame.draw = drawFactory(startedGame);
     startedGame._debug = {
         _state: {

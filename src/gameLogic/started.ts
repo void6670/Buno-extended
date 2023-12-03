@@ -69,6 +69,29 @@ export function onGameButtonPress(ctx: ComponentInteraction<ComponentTypes.BUTTO
             break;
         }
 
+        case ButtonIDs.SHOUT_UNO: {
+            if (!game.players.includes(ctx.member.id)) return ctx.createFollowup({
+                content: "You aren't in the game!",
+                flags: MessageFlags.EPHEMERAL
+            });
+            if (game.currentPlayer !== ctx.user.id) return ctx.createFollowup({
+                content: "It's not your turn!",
+                flags: MessageFlags.EPHEMERAL
+            });
+            if (game.cards[ctx.member.id].length !== 2) return ctx.createFollowup({
+                content: "You need to press this button when you have 2 cards before playing one of them.",
+                flags: MessageFlags.EPHEMERAL
+            });
+            if (game.unoPlayers.includes(ctx.member.id)) return ctx.createFollowup({
+                content: "You already shouted BUNO!",
+                flags: MessageFlags.EPHEMERAL
+            });
+            game.unoPlayers.push(ctx.member.id);
+            sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** is shouting BUNO!`);
+            sendGameMessage(game);
+            break;
+        }
+
         case ButtonIDs.LEAVE_GAME: {
             if (!game.players.includes(ctx.member.id)) return;
 

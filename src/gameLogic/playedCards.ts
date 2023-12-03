@@ -94,6 +94,7 @@ export function onForceDrawPlayed(ctx: ComponentInteraction<ComponentTypes.STRIN
         game.cards[game.currentPlayer].push(...cards);
         game.deck = newDeck;
         game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+        if (game.cards[game.currentPlayer].length > 1 && game.unoPlayers.includes(game.currentPlayer)) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
         sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** drew ${game.drawStackCounter} cards`);
         game.drawStackCounter = 0;
         ctx.deleteOriginal();
@@ -168,6 +169,7 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
 
     let extraInfo = "";
     if (cardPlayed === "draw") {
+        if (game.cards[game.currentPlayer].length > 1) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
         if (isSabotage(ctx, game)) return;
         game.drawDuration++;
 
@@ -271,6 +273,12 @@ You drew ${cardEmotes[newCards[0]]}`,
                 : `**${getUsername(ctx.member.id, true, ctx.guild)}** played ${cardEmotes[cardPlayed]} ${toTitleCase(cardPlayed)}`}\
         ${extraInfo.length ? `\n${extraInfo}` : ""}`
     );
+    if (game.cards[ctx.member.id].length === 1 && !game.unoPlayers.includes(ctx.member.id)) {
+        const { cards, newDeck } = game.draw(2);
+        game.cards[ctx.member.id].push(...cards);
+        game.deck[ctx.member.id] = newDeck;
+        sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** forgot to shout BUNO and drew 2 cards.`);
+    }
 
     if (cardPlayed !== "draw" || !game.settings.allowSkipping) {
         sendGameMessage(game);
