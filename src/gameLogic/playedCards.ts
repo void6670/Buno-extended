@@ -106,6 +106,10 @@ export function onForceDrawPlayed(ctx: ComponentInteraction<ComponentTypes.STRIN
 export function onSevenPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SELECT>, game: UnoGame<true>) {
     if (game.currentPlayer !== ctx.member.id) return;
     const id = ctx.data.values.raw[0];
+    if (game.unoPlayers.includes(ctx.member.id)) {
+        game.unoPlayers.splice(game.unoPlayers.indexOf(ctx.member.id), 1);
+        game.unoPlayers.push(id);
+    }
     game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
 
     const otherPlayerCards = [...game.cards[id]];
