@@ -87,7 +87,7 @@ export function onGameButtonPress(ctx: ComponentInteraction<ComponentTypes.BUTTO
                 flags: MessageFlags.EPHEMERAL
             });
             game.unoPlayers.push(ctx.member.id);
-            sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** is shouting BUNO!`);
+            sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** shouted BUNO!`);
             sendGameMessage(game);
             break;
         }
