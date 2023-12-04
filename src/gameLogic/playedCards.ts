@@ -12,8 +12,10 @@ import { games, onTimeout, sendGameMessage } from "./index.js";
 import { makeDrawCardProxy } from "./notStarted.js";
 
 function isSabotage(ctx: ComponentInteraction<ComponentTypes.STRING_SELECT>, game: UnoGame<true>): boolean {
+    const [ccColor, ccVariant] = game.currentCard.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
     // first card is duration=0, second is duration=1, etc
     let maxDuration = 4; // so default is kick on 5th card drawn
+    if (!game.cards[ctx.member.id].find(c => c.startsWith(ccColor) || c.endsWith(ccVariant) || ccColor === "wild" || ccColor === "+4")) return;
     if (game.cards[next(game.players, game.players.indexOf(game.lastPlayer.id))].length <= 2) maxDuration--;
     if (game.saboteurs[game.lastPlayer.id]) maxDuration--;
 
@@ -173,7 +175,7 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
     let extraInfo = "";
     if (cardPlayed === "draw") {
         if (game.cards[game.currentPlayer].length > 1) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
-        if (isSabotage(ctx, game)) return;
+        if (game.settings.antiSabotage && isSabotage(ctx, game)) return;
         game.drawDuration++;
 
         const { cards: newCards, newDeck } = game.draw(1);
