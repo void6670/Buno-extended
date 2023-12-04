@@ -156,9 +156,9 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
         if (game.cards[ctx.member.id].length === 0) return deleteMessage(game.message);
 
         return ctx.createFollowup({
-            content: `<@${ctx.member.id}> Choose a color`,
+            content: "Choose a color",
             components: CardColorSelect(color as typeof uniqueVariants[number]),
-            allowedMentions: { users: true }
+            flags: MessageFlags.EPHEMERAL
         });
     }
 
