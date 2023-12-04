@@ -174,7 +174,7 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
 
     let extraInfo = "";
     if (cardPlayed === "draw") {
-        if (game.cards[game.currentPlayer].length > 1) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
+        if (game.cards[game.currentPlayer].length > 1 && game.unoPlayers.includes(game.currentPlayer)) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
         if (game.settings.antiSabotage && isSabotage(ctx, game)) return;
         game.drawDuration++;
 
@@ -208,6 +208,13 @@ You drew ${cardEmotes[newCards[0]]}`,
         game.currentCardColor = color as typeof colors[number];
         game.drawDuration = 0;
         game.cards[ctx.member.id].splice(game.cards[ctx.member.id].indexOf(cardPlayed), 1);
+        if (game.cards[ctx.member.id].length === 1 && !game.unoPlayers.includes(ctx.member.id)) {
+            const { cards, newDeck } = game.draw(2);
+            game.cards[ctx.member.id].push(...cards);
+            game.deck[ctx.member.id] = newDeck;
+            sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** forgot to shout BUNO and drew 2 cards.`);
+        }
+        if (game.cards[game.currentPlayer].length === 1 && !game.unoPlayers.includes(game.currentPlayer)) game.unoPlayers.splice(game.unoPlayers.indexOf(game.currentPlayer), 1);
         if (game.cards[ctx.member.id].length === 0) return deleteMessage(game.message);
 
         switch (variant) {
@@ -284,12 +291,6 @@ You drew ${cardEmotes[newCards[0]]}`,
                 : `**${getUsername(ctx.member.id, true, ctx.guild)}** played ${cardEmotes[cardPlayed]} ${toTitleCase(cardPlayed)}`}\
         ${extraInfo.length ? `\n${extraInfo}` : ""}`
     );
-    if (game.cards[ctx.member.id].length === 1 && !game.unoPlayers.includes(ctx.member.id)) {
-        const { cards, newDeck } = game.draw(2);
-        game.cards[ctx.member.id].push(...cards);
-        game.deck[ctx.member.id] = newDeck;
-        sendMessage(ctx.channel.id, `**${getUsername(ctx.member.id, true, ctx.guild)}** forgot to shout BUNO and drew 2 cards.`);
-    }
 
     if (cardPlayed !== "draw" || !game.settings.allowSkipping) {
         sendGameMessage(game);
