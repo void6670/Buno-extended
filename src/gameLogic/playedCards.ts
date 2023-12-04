@@ -243,9 +243,9 @@ You drew ${cardEmotes[newCards[0]]}`,
                 if (!game.settings.sevenAndZero) break;
 
                 return ctx.createFollowup({
-                    content: `<@${ctx.member.id}> Choose a player`,
+                    content: "Choose a player",
                     components: PlayerUserSelect(game),
-                    allowedMentions: { users: true }
+                    flags: MessageFlags.EPHEMERAL
                 });
             }
             case "0": {
