@@ -71,7 +71,6 @@ export function onColorPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SE
 
     game.currentCard = variant;
     game.currentCardColor = color;
-    game.cards[ctx.member.id].splice(game.cards[ctx.member.id].indexOf(variant), 1);
     game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
     ctx.deleteOriginal();
     deleteMessage(ctx.message.channel.messages.get(ctx.message.messageReference?.messageID));
