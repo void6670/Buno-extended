@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "lint": "eslint . --ext .ts",
-        "build": "npx tsc -b",
+        "build": "tsc -b",
         "start": "nodemon",
         "start:restart": "nodemon -x \"node . || touch dist/index.js\"",
         "dev": "nodemon -x \"node --loader ts-node/esm src/index.ts --dev\" -e ts,json"
@@ -16,19 +16,19 @@
     "dependencies": {
         "@oceanicjs/builders": "^1.1.9",
         "dotenv": "^16.3.1",
-        "oceanic.js": "^1.7.1",
+        "oceanic.js": "^1.8.1",
         "toml": "^3.0.0"
     },
     "devDependencies": {
-        "@types/node": "^20.4.2",
-        "@typescript-eslint/eslint-plugin": "^6.1.0",
-        "@typescript-eslint/parser": "^6.1.0",
-        "eslint": "^8.45.0",
+        "@types/node": "^20.10.3",
+        "@typescript-eslint/eslint-plugin": "^6.13.1",
+        "@typescript-eslint/parser": "^6.13.1",
+        "eslint": "^8.55.0",
         "eslint-plugin-simple-import-sort": "^10.0.0",
         "eslint-plugin-unused-imports": "^3.0.0",
-        "nodemon": "^3.0.1",
+        "nodemon": "^3.0.2",
         "ts-node": "^10.9.1",
-        "typescript": "^5.1.6"
+        "typescript": "^5.3.2"
     },
     "type": "module",
     "nodemonConfig": {
