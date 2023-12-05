@@ -130,6 +130,10 @@ ${cardEmotes[game.currentCard]} ${toTitleCase(game.currentCard)}
 
 export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SELECT>, game: UnoGame<true>, ignoreDrawStack = false) {
     if (game.currentPlayer !== ctx.member.id) return;
+    if (game.hasPlayed === true) return ctx.createFollowup({
+        content: `You already played a card.`,
+        flags: MessageFlags.EPHEMERAL
+    });
     const cardPlayed = ctx.data.values.raw[0] as Card | "draw" | "skip";
     if (cardPlayed !== "draw") game.hasPlayed = true;
     const [color, variant] = cardPlayed.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
