@@ -135,7 +135,6 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
         flags: MessageFlags.EPHEMERAL
     });
     const cardPlayed = ctx.data.values.raw[0] as Card | "draw" | "skip";
-    if (cardPlayed !== "draw") game.hasPlayed = true;
     const [color, variant] = cardPlayed.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
     const [ccColor, ccVariant] = game.currentCard.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
 
@@ -155,7 +154,7 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
         content: "nuh uh ☝️",
         flags: MessageFlags.EPHEMERAL
     });
-
+    if (cardPlayed !== "draw") game.hasPlayed = true;
     if (uniqueVariants.includes(color)) {
         game.currentCard = color as typeof uniqueVariants[number];
         game.drawDuration = 0;
@@ -293,7 +292,7 @@ You drew ${cardEmotes[newCards[0]]}`,
 
     if (!game.settings.allowSkipping) {
         game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
-        game.hasPlayed=false;
+        game.hasPlayed = false;
     }
     game.cards[ctx.member.id].sort((a, b) => cards.indexOf(a) - cards.indexOf(b));
 
