@@ -59,7 +59,10 @@ export function onGameButtonPress(ctx: ComponentInteraction<ComponentTypes.BUTTO
                 components: DrawStackedCardSelect(game, cardArrayToCount(game.cards[ctx.member.id])),
                 flags: MessageFlags.EPHEMERAL
             });
-
+            if (game.hasPlayed) return ctx.createFollowup({
+                content: `You already played a card.`,
+                flags: MessageFlags.EPHEMERAL
+            });
             const components = PickCardSelect(game, ctx.member.id);
             if (components) ctx.createFollowup({
                 content: config.emoteless ? null : game.cards[ctx.member.id].map(c => cardEmotes[c]).join(" "),

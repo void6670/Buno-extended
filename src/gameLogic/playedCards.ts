@@ -74,6 +74,7 @@ export function onColorPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SE
     game.currentCard = variant;
     game.currentCardColor = color;
     game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+    game.hasPlayed = false;
     ctx.deleteOriginal();
     deleteMessage(ctx.message.channel.messages.get(ctx.message.messageReference?.messageID));
 
@@ -112,6 +113,7 @@ export function onSevenPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SE
         game.unoPlayers.push(id);
     }
     game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+    game.hasPlayed = false;
 
     const otherPlayerCards = [...game.cards[id]];
     game.cards[id] = makeDrawCardProxy(game.cards[ctx.member.id], game, id);
@@ -129,6 +131,7 @@ ${cardEmotes[game.currentCard]} ${toTitleCase(game.currentCard)}
 export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SELECT>, game: UnoGame<true>, ignoreDrawStack = false) {
     if (game.currentPlayer !== ctx.member.id) return;
     const cardPlayed = ctx.data.values.raw[0] as Card | "draw" | "skip";
+    if (cardPlayed !== "draw") game.hasPlayed = true;
     const [color, variant] = cardPlayed.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
     const [ccColor, ccVariant] = game.currentCard.split("-") as [typeof colors[number] | typeof uniqueVariants[number], typeof variants[number]];
 
@@ -155,7 +158,7 @@ export function onCardPlayed(ctx: ComponentInteraction<ComponentTypes.STRING_SEL
         game.cards[ctx.member.id].splice(game.cards[ctx.member.id].indexOf(cardPlayed as Card), 1);
         if (game.cards[ctx.member.id].length === 0) return deleteMessage(game.message);
 
-        return ctx.createFollowup({
+        return ctx.editOriginal({
             content: "Choose a color",
             components: CardColorSelect(color as typeof uniqueVariants[number]),
             flags: MessageFlags.EPHEMERAL
@@ -200,6 +203,7 @@ You drew ${cardEmotes[newCards[0]]}`,
     else if (cardPlayed === "skip") {
         game.drawDuration = 0;
         game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+        game.hasPlayed = false;
         ctx.deleteOriginal();
     }
 
@@ -222,6 +226,7 @@ You drew ${cardEmotes[newCards[0]]}`,
                 game.players = game.players.reverse();
                 if (game.players.length === 2) {
                     game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+                    game.hasPlayed = false;
                     extraInfo = `**${getUsername(game.currentPlayer, true, ctx.guild)}** was skipped`;
                 }
                 break;
@@ -243,13 +248,14 @@ You drew ${cardEmotes[newCards[0]]}`,
             }
             case "block": {
                 game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+                game.hasPlayed = false;
                 extraInfo = `**${getUsername(game.currentPlayer, true, ctx.guild)}** was skipped`;
                 break;
             }
             case "7": {
                 if (!game.settings.sevenAndZero) break;
 
-                return ctx.createFollowup({
+                return ctx.editOriginal({
                     content: "Choose a player",
                     components: PlayerUserSelect(game),
                     flags: MessageFlags.EPHEMERAL
@@ -274,13 +280,17 @@ You drew ${cardEmotes[newCards[0]]}`,
             }
         }
 
-        if (game.settings.allowSkipping)
+        if (game.settings.allowSkipping) {
             game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+            game.hasPlayed = false;
+        }
         ctx.deleteOriginal();
     }
 
-    if (!game.settings.allowSkipping)
+    if (!game.settings.allowSkipping) {
         game.currentPlayer = next(game.players, game.players.indexOf(game.currentPlayer));
+        game.hasPlayed=false;
+    }
     game.cards[ctx.member.id].sort((a, b) => cards.indexOf(a) - cards.indexOf(b));
 
     sendMessage(ctx.channel.id,
